@@ -1,6 +1,6 @@
 # MuSiQue.py: collect MuSiQue two-hop questions that a model CANNOT answer closed-book.
 # Usage: python MuSiQue.py --model Qwen/Qwen2.5-0.5B-Instruct --n 10
-# Output: MuSiQue_<model name>.pkl, e.g. MuSiQue_Qwen2.5-0.5B-Instruct.pkl
+# Output: MuSiQue_<model name>_<n>.pkl, e.g. MuSiQue_Qwen2.5-0.5B-Instruct_10.pkl
 import argparse
 import pickle
 import random
@@ -9,6 +9,7 @@ import unicodedata
 
 import torch
 from datasets import load_dataset
+from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 INSTRUCTION = """Answer with only the answer, in as few words as possible. No sentences, no explanations.
@@ -59,19 +60,25 @@ def main():
 
     # Keep the questions the model answers WRONG without documents (no prior knowledge)
     kept, checked = [], 0
-    for ex in pool:
+    pbar = tqdm(pool, desc="Evaluating questions")
+    for ex in pbar:
         golds = [ex["answer"]] + list(ex["answer_aliases"] or [])
         answer = ask(model, tok, ex["question"])
         checked += 1
+        
         if not is_correct(answer, golds):
             kept.append({**ex, "gold_answers": golds, "model": args.model, "model_answer": answer})
+        
+        pbar.set_postfix(failed=f"{len(kept)}/{args.n}", checked=checked)
+        
         if len(kept) == args.n:
             break
+    pbar.close()
 
     out_file = f"MuSiQue_{args.model.split('/')[-1]}_{args.n}.pkl"
     with open(out_file, "wb") as f:
         pickle.dump(kept, f)
-    print(f"Checked {checked} questions; the model failed {len(kept)}. Saved to {out_file}")
+    print(f"\nChecked {checked} questions; the model failed {len(kept)}. Saved to {out_file}")
 
 
 if __name__ == "__main__":
