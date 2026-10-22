@@ -11,8 +11,12 @@ import torch
 from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-INSTRUCTION = "Answer the question in as few words as possible. No explanations."
+INSTRUCTION = """Answer with only the answer, in as few words as possible. No sentences, no explanations.
 
+Question: Who directed Jaws?
+Answer: Steven Spielberg
+Question: What is the capital of the country where the Eiffel Tower is?
+Answer: Paris"""
 
 def normalize(text):
     """Lowercase, no accents, no punctuation or articles, no spaces: 'The Fiorello La Guardia.' -> 'fiorellolaguardia'"""
