@@ -211,11 +211,15 @@ def main():
                 break
 
     dataset = candidates[0].get("dataset", "MuSiQue") if candidates else "MuSiQue"
-    out_file = (
-        f"{dataset}_filtered.pkl"
-        if args.input in (f"{dataset}.pkl", f"{dataset}_filtered.pkl")
-        else f"{args.input.removesuffix('.pkl')}__filtered_{name}_{len(kept)}.pkl"
-    )
+    out_file = args.output if args.output else f"{dataset}_filtered.pkl"
+
+    if not out_file.endswith(".pkl"):
+        out_file += ".pkl"
+
+    if os.path.abspath(out_file) == os.path.abspath(args.input):
+        raise ValueError(
+            "Output file matches input file. Specify --output to avoid overwriting the input."
+        )
     with open(out_file, "wb") as f:
         pickle.dump(kept, f)
 
