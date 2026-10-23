@@ -1,0 +1,648 @@
+[
+  {
+    "step": 1,
+    "time": "2026-10-23T15:58:38",
+    "role": "pool",
+    "model": null,
+    "eligible": 1252,
+    "pool": 500,
+    "seed": 0,
+    "chain": [
+      "Qwen/Qwen2.5-72B-Instruct-AWQ",
+      "Qwen/Qwen2.5-32B-Instruct-AWQ",
+      "Qwen/Qwen2.5-14B-Instruct",
+      "Qwen/Qwen2.5-7B-Instruct",
+      "Qwen/Qwen2.5-3B-Instruct",
+      "Qwen/Qwen2.5-1.5B-Instruct",
+      "Qwen/Qwen2.5-0.5B-Instruct"
+    ],
+    "final_model": "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4",
+    "final_target": 100,
+    "answer_prompt": "Answer with only the answer, in as few words as possible. No sentences, no explanations.\n\nQuestion: Who directed Jaws?\nAnswer: Steven Spielberg\nQuestion: What is the capital of the country where the Eiffel Tower is?\nAnswer: Paris",
+    "judge_prompt": "Question: {question}\nGold answer: {gold}\nModel answer: {answer}\nDoes the model answer refer to the same thing as the gold answer (e.g. \"Prince Philip\" = \"Philip Mountbatten\")?\nReply with only yes or no."
+  },
+  {
+    "step": 2,
+    "time": "2026-10-23T16:06:59",
+    "model": "Qwen/Qwen2.5-72B-Instruct-AWQ",
+    "role": "filter",
+    "evaluated": 500,
+    "string_match_correct": 79,
+    "judge_correct": 21,
+    "total_correct": 100,
+    "answered_wrong": 400,
+    "kept": 400,
+    "pct_known": 20.0,
+    "pct_judge_among_string_wrong": 5.0,
+    "elapsed_sec": 495.9,
+    "judge_flipped_examples": [
+      {
+        "question": "What award did the actor who played Peter Pan in the movie Hook receive?",
+        "gold": [
+          "Academy Award for Best Supporting Actor"
+        ],
+        "answer": "Oscar"
+      },
+      {
+        "question": "Who was the spouse of the British queen?",
+        "gold": [
+          "Philip Mountbatten"
+        ],
+        "answer": "Prince Philip"
+      },
+      {
+        "question": "What is the position of the person impeached in England for acts committed as governor general of India?",
+        "gold": [
+          "Governor-General of India",
+          "Viceroy of India"
+        ],
+        "answer": "Warren Hastings"
+      },
+      {
+        "question": "What season was the performer of Addicted a part of?",
+        "gold": [
+          "season five"
+        ],
+        "answer": "Season 5"
+      },
+      {
+        "question": "What was the cast member of The Bad Man nominated for?",
+        "gold": [
+          "Academy Award for Best Supporting Actor"
+        ],
+        "answer": "Oscar"
+      },
+      {
+        "question": "What did the actress whom mercer and mancini wrote the song moon river for win a tony for?",
+        "gold": [
+          "for Best Performance by a Leading Actress in a Play in Ondine",
+          "leading role",
+          "star",
+          "leading actress",
+          "lead"
+        ],
+        "answer": "Audrey Hepburn"
+      },
+      {
+        "question": "When do Pam and Pam's spouse on The Office end up together?",
+        "gold": [
+          "during the highly anticipated, hour long episode, ``Niagara ''"
+        ],
+        "answer": "Season 4, Episode 21"
+      },
+      {
+        "question": "Who is the spouse of the current queen of England?",
+        "gold": [
+          "Philip Mountbatten"
+        ],
+        "answer": "Prince Philip"
+      },
+      {
+        "question": "In what part of the country is Minudasht County?",
+        "gold": [
+          "in the north-east of the country south of the Caspian Sea",
+          "Caspian Sea"
+        ],
+        "answer": "Iran"
+      },
+      {
+        "question": "Why was Common Sense, by the same author as Rights of Man, an important work?",
+        "gold": [
+          "crystallized the rebellious demand for independence from Great Britain",
+          "Great Britain"
+        ],
+        "answer": "Influenced American Revolution, spread democratic ideas."
+      },
+      {
+        "question": "Who plays the legendary figure featured in Historia Regum Britanniae in the show Once Upon a Time?",
+        "gold": [
+          "Liam Thomas Garrigan",
+          "Liam Garrigan"
+        ],
+        "answer": "Merlin"
+      },
+      {
+        "question": "What is the network which National Cycle Route 57 is part of an example of?",
+        "gold": [
+          "national cycling route network",
+          "National cycling route network"
+        ],
+        "answer": "National Cycle Network"
+      },
+      {
+        "question": "Why is Common Sense, which was written by an author who encouraged revolt, an important work?",
+        "gold": [
+          "crystallized the rebellious demand for independence from Great Britain",
+          "Great Britain"
+        ],
+        "answer": "Influenced American Revolution"
+      },
+      {
+        "question": "Who is the mother of Katharine Smith Salisbury's brother?",
+        "gold": [
+          "Lucy Mack Smith"
+        ],
+        "answer": "Katharine Smith Salisbury's mother"
+      },
+      {
+        "question": "Where is the Voshmgir District located?",
+        "gold": [
+          "in the north-east of the country south of the Caspian Sea",
+          "Caspian Sea"
+        ],
+        "answer": "Iran"
+      },
+      {
+        "question": "The island where they filmed ninja warrior in Australia is located in what harbor?",
+        "gold": [
+          "Sydney Harbour"
+        ],
+        "answer": "Sydney Harbor"
+      },
+      {
+        "question": "The Directory of Public Worship was approved by a parliament whose modern equivalent has been based where since 2004?",
+        "gold": [
+          "Scottish Parliament Building"
+        ],
+        "answer": "Edinburgh"
+      },
+      {
+        "question": "Who married the narrator of How I Met Your Mother?",
+        "gold": [
+          "Tracy Mosby"
+        ],
+        "answer": "Ted Mosby"
+      },
+      {
+        "question": "Who is the grandfather of James Mayer de Rothschild?",
+        "gold": [
+          "Amschel Moses Rothschild"
+        ],
+        "answer": "Mayer Amschel Rothschild"
+      },
+      {
+        "question": "Who founded what Robert J Chassell is a member of?",
+        "gold": [
+          "Richard Stallman"
+        ],
+        "answer": "GNU Project"
+      }
+    ],
+    "output_file": "runs/MuSiQue_01_Qwen2.5-72B-Instruct-AWQ.pkl"
+  },
+  {
+    "step": 3,
+    "time": "2026-10-23T16:09:22",
+    "model": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+    "role": "filter",
+    "evaluated": 400,
+    "string_match_correct": 14,
+    "judge_correct": 8,
+    "total_correct": 22,
+    "answered_wrong": 378,
+    "kept": 378,
+    "pct_known": 5.5,
+    "pct_judge_among_string_wrong": 2.1,
+    "elapsed_sec": 139.8,
+    "judge_flipped_examples": [
+      {
+        "question": "By 1931, what percentage of the world's Jews were the group of Jews that represented the bulk of modern Jewry?",
+        "gold": [
+          "92 percent"
+        ],
+        "answer": "90%"
+      },
+      {
+        "question": "Who is the spouse of the other president Jenkins Orphanage played for that wasn't Taft?",
+        "gold": [
+          "Edith Roosevelt"
+        ],
+        "answer": "Eleanor Roosevelt"
+      },
+      {
+        "question": "Who is the mother of the father of Julia Murdock Smith?",
+        "gold": [
+          "Lucy Mack Smith"
+        ],
+        "answer": "Julia's paternal grandmother"
+      },
+      {
+        "question": "What is the current population in 2017 of the country being the defending champions of champions trophy?",
+        "gold": [
+          "207.77 million people"
+        ],
+        "answer": "207,790,348 (India)"
+      },
+      {
+        "question": "Where is the country with ISO code ISO 3166-2:CV located?",
+        "gold": [
+          "central Atlantic Ocean",
+          "Atlantic Ocean",
+          "Atlantic"
+        ],
+        "answer": "Cape Verde"
+      },
+      {
+        "question": "What does the name of the organization the Haiti national football team belongs to stand for?",
+        "gold": [
+          "International Federation of Association Football",
+          "FIFA"
+        ],
+        "answer": "Fédération Internationale de Football Association"
+      },
+      {
+        "question": "During what era was the manufacturer of Agni-V founded?",
+        "gold": [
+          "From the 1950s to the 1970s"
+        ],
+        "answer": "1957"
+      },
+      {
+        "question": "What movement does the creator of the Washington Monument belong to?",
+        "gold": [
+          "Greek Revival"
+        ],
+        "answer": "Neoclassical movement"
+      }
+    ],
+    "output_file": "runs/MuSiQue_02_Qwen2.5-32B-Instruct-AWQ.pkl"
+  },
+  {
+    "step": 4,
+    "time": "2026-10-23T16:18:51",
+    "model": "Qwen/Qwen2.5-14B-Instruct",
+    "role": "filter",
+    "evaluated": 378,
+    "string_match_correct": 10,
+    "judge_correct": 2,
+    "total_correct": 12,
+    "answered_wrong": 366,
+    "kept": 366,
+    "pct_known": 3.2,
+    "pct_judge_among_string_wrong": 0.5,
+    "elapsed_sec": 566.7,
+    "judge_flipped_examples": [
+      {
+        "question": "Where is the origin of the Caledon River?",
+        "gold": [
+          "Thaba Putsoa"
+        ],
+        "answer": "Lesotho"
+      },
+      {
+        "question": "Which iPod generation introduced compatibility with the industry standard connection that was first widely used at version 1.1?",
+        "gold": [
+          "third generation"
+        ],
+        "answer": "3rd generation"
+      }
+    ],
+    "output_file": "runs/MuSiQue_03_Qwen2.5-14B-Instruct.pkl"
+  },
+  {
+    "step": 5,
+    "time": "2026-10-23T16:20:01",
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "role": "filter",
+    "evaluated": 366,
+    "string_match_correct": 5,
+    "judge_correct": 2,
+    "total_correct": 7,
+    "answered_wrong": 359,
+    "kept": 359,
+    "pct_known": 1.9,
+    "pct_judge_among_string_wrong": 0.6,
+    "elapsed_sec": 65.0,
+    "judge_flipped_examples": [
+      {
+        "question": "What was the name of the star of Forced Vengeance in Walter, Texas Ranger?",
+        "gold": [
+          "Cordell Walker"
+        ],
+        "answer": "Tommy Lee Jones"
+      },
+      {
+        "question": "In what episode of The Office does Dwight save Pam's husband from Roy?",
+        "gold": [
+          "``The Negotiation ''",
+          "Negotiation",
+          "negotiation"
+        ],
+        "answer": "Season 7, Episode 20"
+      }
+    ],
+    "output_file": "runs/MuSiQue_04_Qwen2.5-7B-Instruct.pkl"
+  },
+  {
+    "step": 6,
+    "time": "2026-10-23T16:20:41",
+    "model": "Qwen/Qwen2.5-3B-Instruct",
+    "role": "filter",
+    "evaluated": 359,
+    "string_match_correct": 5,
+    "judge_correct": 0,
+    "total_correct": 5,
+    "answered_wrong": 354,
+    "kept": 354,
+    "pct_known": 1.4,
+    "pct_judge_among_string_wrong": 0.0,
+    "elapsed_sec": 39.5,
+    "judge_flipped_examples": [],
+    "output_file": "runs/MuSiQue_05_Qwen2.5-3B-Instruct.pkl"
+  },
+  {
+    "step": 7,
+    "time": "2026-10-23T16:21:08",
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "role": "filter",
+    "evaluated": 354,
+    "string_match_correct": 5,
+    "judge_correct": 15,
+    "total_correct": 20,
+    "answered_wrong": 334,
+    "kept": 334,
+    "pct_known": 5.6,
+    "pct_judge_among_string_wrong": 4.3,
+    "elapsed_sec": 26.5,
+    "judge_flipped_examples": [
+      {
+        "question": "Who is the child of the Victim of Romance performer?",
+        "gold": [
+          "Chynna Phillips"
+        ],
+        "answer": "The Child of the Victim of Romance performer is David Hasselhoff's son, Kevin Hasselhoff."
+      },
+      {
+        "question": "Which season was the runner up of the third season of American Idol on?",
+        "gold": [
+          "season three"
+        ],
+        "answer": "The season that was the runner-up of the third season of American Idol was Season 10."
+      },
+      {
+        "question": "Where is the province containing Bandar-e Gaz County located?",
+        "gold": [
+          "in the north-east of the country south of the Caspian Sea",
+          "Caspian Sea"
+        ],
+        "answer": "Iran"
+      },
+      {
+        "question": "Where is Sean Hampton's birth place in the state of Florida?",
+        "gold": [
+          "in Northern Florida",
+          "Northern Florida"
+        ],
+        "answer": "Tampa"
+      },
+      {
+        "question": "What was the story of the character from The Bourne Deception based on?",
+        "gold": [
+          "the novel of the same name by Robert Ludlum",
+          "Robert Ludlum"
+        ],
+        "answer": "a CIA operative"
+      },
+      {
+        "question": "What is the ruler of the underworld in ancient Egypt a part of?",
+        "gold": [
+          "ancient Egyptian religion"
+        ],
+        "answer": "Osiris"
+      },
+      {
+        "question": "Who is the other child of Chian Hsiao-chang's father?",
+        "gold": [
+          "Chiang Hsiao-wu",
+          "Alex Chiang"
+        ],
+        "answer": "Ching-hua Hsiao-Chang"
+      },
+      {
+        "question": "What was the 2017 population of the country where Bedari was made?",
+        "gold": [
+          "207.77 million people"
+        ],
+        "answer": "Iran"
+      },
+      {
+        "question": "Who is Frances Freeling Broderip's sibling?",
+        "gold": [
+          "Tom Hood",
+          "Thomas Hood"
+        ],
+        "answer": "Brother"
+      },
+      {
+        "question": "Where in florida did Rosalie King die?",
+        "gold": [
+          "in Northern Florida",
+          "Northern Florida"
+        ],
+        "answer": "Clearwater"
+      },
+      {
+        "question": "By 1931, what percentage of the world's Jews were the group that represents at least 70% of Jews worldwide?",
+        "gold": [
+          "92 percent"
+        ],
+        "answer": "The Ashkenazi Jews"
+      },
+      {
+        "question": "What is the mascot of the school that owns Goss Stadium at Coleman Field?",
+        "gold": [
+          "Benny Beaver"
+        ],
+        "answer": "The mascot of the school that owns Goss Stadium at Coleman Field is The Gossie."
+      },
+      {
+        "question": "Who is the child of Caroline LeRoy's spouse?",
+        "gold": [
+          "Fletcher Webster"
+        ],
+        "answer": "Her husband"
+      },
+      {
+        "question": "Where did the author of The National Dream go to university?",
+        "gold": [
+          "University of British Columbia",
+          "The University of British Columbia"
+        ],
+        "answer": "Cambridge"
+      },
+      {
+        "question": "Where did the star of Dark Hazard study?",
+        "gold": [
+          "American Academy of Dramatic Arts",
+          "The City College of New York",
+          "City College",
+          "City College of New York"
+        ],
+        "answer": "Film school"
+      }
+    ],
+    "output_file": "runs/MuSiQue_06_Qwen2.5-1.5B-Instruct.pkl"
+  },
+  {
+    "step": 8,
+    "time": "2026-10-23T16:21:25",
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "role": "filter",
+    "evaluated": 334,
+    "string_match_correct": 2,
+    "judge_correct": 310,
+    "total_correct": 312,
+    "answered_wrong": 22,
+    "kept": 22,
+    "pct_known": 93.4,
+    "pct_judge_among_string_wrong": 93.4,
+    "elapsed_sec": 15.8,
+    "judge_flipped_examples": [
+      {
+        "question": "In which league was Ilsinho's team?",
+        "gold": [
+          "Major League Soccer",
+          "MLS"
+        ],
+        "answer": "Brazilian League"
+      },
+      {
+        "question": "In Grown Ups, who is married to the actor who also starred in Here Comes the Boom?",
+        "gold": [
+          "Maria Bello"
+        ],
+        "answer": "Jesse Eisenberg"
+      },
+      {
+        "question": "Who is the federal leader of the party in which John Lynch-Staunton held a position?",
+        "gold": [
+          "Andrew Scheer"
+        ],
+        "answer": "The Federal Leader of the Party in which John Lynch-Staunton held a position is Donald Trump."
+      },
+      {
+        "question": "Who wrote the song turn me on that is performed by performer of Feelin' the Same Way?",
+        "gold": [
+          "John D. Loudermilk"
+        ],
+        "answer": "The Beatles"
+      },
+      {
+        "question": "Who is the spouse of the actor portraying Jerry Lee Lewis in Great Balls of Fire?",
+        "gold": [
+          "Meg Ryan"
+        ],
+        "answer": "Jill Clayburgh"
+      },
+      {
+        "question": "What's the life span of the scholar who theorized about pulmonary circulation?",
+        "gold": [
+          "1213–1288"
+        ],
+        "answer": "Ernest Rutherford"
+      },
+      {
+        "question": "Who married the governor who passed a law in honor of Donda West?",
+        "gold": [
+          "Maria Shriver"
+        ],
+        "answer": "Donda West's husband was Governor William B. Jones."
+      },
+      {
+        "question": "What body of water includes the terrain feature where Coffee Swamp is located?",
+        "gold": [
+          "Lake Superior",
+          "Superior"
+        ],
+        "answer": "The Great Lakes"
+      },
+      {
+        "question": "Where is the headquarters of the 1st Combat Communication Squadron located?",
+        "gold": [
+          "Ramstein-Miesenbach"
+        ],
+        "answer": "Fort Bragg, North Carolina"
+      },
+      {
+        "question": "When was the father of Diego Sinagra signed by Barcelona?",
+        "gold": [
+          "June 1982"
+        ],
+        "answer": "1986"
+      },
+      {
+        "question": "Who did the person portraying Batman in the Justice League movie play in Dazed and Confused?",
+        "gold": [
+          "Fred O'Bannion"
+        ],
+        "answer": "The person who played Batman in the Justice League movie was Adam Sandler."
+      },
+      {
+        "question": "What county is Gerald T. Whelan's birthplace located in?",
+        "gold": [
+          "Adams County",
+          "Adams County, Nebraska"
+        ],
+        "answer": "New Jersey"
+      },
+      {
+        "question": "When did the crowning of the person under whom the Chapter House was built happen?",
+        "gold": [
+          "1216"
+        ],
+        "answer": "1857"
+      },
+      {
+        "question": "with what movie did Mary Philips' husband win his only oscar?",
+        "gold": [
+          "The African Queen"
+        ],
+        "answer": "The movie \"Mary Poppins\" won her an Oscar for Best Original Song."
+      },
+      {
+        "question": "Who gives out the prize named after the author of Lectures on Jurisprudence?",
+        "gold": [
+          "University of Cambridge",
+          "Cambridge"
+        ],
+        "answer": "Jules Charlier"
+      },
+      {
+        "question": "What year did the city were Hans-Joachim Merker was born end?",
+        "gold": [
+          "1738"
+        ],
+        "answer": "1950"
+      },
+      {
+        "question": "Who is the spouse of the author of Queen of the Elephants?",
+        "gold": [
+          "Clio Goldsmith"
+        ],
+        "answer": "The spouse of the author of \"Queen of the Elephants\" is Elizabeth Taylor."
+      },
+      {
+        "question": "On what date did the creator of The Blind Girl die?",
+        "gold": [
+          "13 August 1896"
+        ],
+        "answer": "August 19, 2018"
+      },
+      {
+        "question": "When did the Battle at Choo Hoey's birthplace end?",
+        "gold": [
+          "15 February 1942"
+        ],
+        "answer": "1954"
+      },
+      {
+        "question": "What is the name of the university that educated the character that Mel Brooks plays in Mr. Peabody and Sherman?",
+        "gold": [
+          "Luitpold Gymnasium"
+        ],
+        "answer": "The University of Texas at Austin educated the character."
+      }
+    ],
+    "output_file": "runs/MuSiQue_07_Qwen2.5-0.5B-Instruct.pkl"
+  }
+]
