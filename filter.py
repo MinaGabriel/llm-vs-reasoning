@@ -54,24 +54,32 @@ def chat(tok, text):
 
 
 def load_llm(model_id, quant="none"):
-    """Model + left-padded tokenizer. Pre-quantized AWQ/GPTQ ids load as they are; others in bf16 or bitsandbytes."""
+    """Model + left-padded tokenizer. Pre-quantized AWQ/GPTQ ids load on GPU 0 in fp16; others in bf16 or bitsandbytes."""
     tok = AutoTokenizer.from_pretrained(model_id)
     tok.padding_side = "left"
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    kwargs = {"device_map": "auto"}
-    if not any(q in model_id.lower() for q in ("awq", "gptq")):
+
+    is_prequantized = any(q in model_id.lower() for q in ("awq", "gptq"))
+    if is_prequantized:
+        # AWQ/GPTQ kernels cannot be offloaded to CPU/meta; pin directly to GPU 0 in fp16
+        kwargs = {"device_map": {"": 0}, "torch_dtype": torch.float16}
+    else:
+        kwargs = {"device_map": "auto"}
         if quant == "4bit":
-            kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
-                                                               bnb_4bit_compute_dtype=torch.bfloat16,
-                                                               bnb_4bit_use_double_quant=True)
+            kwargs["quantization_config"] = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_use_double_quant=True,
+            )
         elif quant == "8bit":
             kwargs["quantization_config"] = BitsAndBytesConfig(load_in_8bit=True)
         else:
             kwargs["torch_dtype"] = torch.bfloat16
+
     model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs).eval()
     return model, tok
-
 
 def unload_llm(llm, model_id=None, delete_cache=False):
     """Free GPU memory; optionally delete the model's files from the Hugging Face cache (saves disk)."""

@@ -644,5 +644,401 @@
       }
     ],
     "output_file": "runs/MuSiQue_07_Qwen2.5-0.5B-Instruct.pkl"
+  },
+  {
+    "step": 9,
+    "time": "2026-10-23T16:28:52",
+    "model": "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4",
+    "role": "filter",
+    "evaluated": 22,
+    "string_match_correct": 0,
+    "judge_correct": 5,
+    "total_correct": 5,
+    "answered_wrong": 17,
+    "kept": 17,
+    "pct_known": 22.7,
+    "pct_judge_among_string_wrong": 22.7,
+    "elapsed_sec": 34.0,
+    "judge_flipped_examples": [
+      {
+        "question": "How many people were in the British colonies where bison antiquus could be found?",
+        "gold": [
+          "2 million"
+        ],
+        "answer": "Millions"
+      },
+      {
+        "question": "What year did the author of The First Blast of the Trumpet Against the Monstruous Regiment of Women die?",
+        "gold": [
+          "1572"
+        ],
+        "answer": "1560"
+      },
+      {
+        "question": "Where are the headquarters for the publisher of In the Shadow of Greatness?",
+        "gold": [
+          "Annapolis",
+          "Annapolis, Maryland"
+        ],
+        "answer": "US Naval Institute Press"
+      },
+      {
+        "question": "How many atms does the bank that bought FleetBoston Financial has are there?",
+        "gold": [
+          "15,900"
+        ],
+        "answer": "Bank of America: 16,000"
+      },
+      {
+        "question": "Who is the guy defending stuff from the religious scripture that fits into a large, loose definition of legal literature?",
+        "gold": [
+          "Josh McDowell"
+        ],
+        "answer": "Apologist"
+      }
+    ],
+    "time_sensitive_removed": 0,
+    "final_questions": 17
+  },
+  {
+    "step": 10,
+    "time": "2026-10-23T16:31:28",
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "role": "filter",
+    "evaluated": 334,
+    "string_match_correct": 2,
+    "judge_correct": 310,
+    "total_correct": 312,
+    "answered_wrong": 22,
+    "kept": 22,
+    "pct_known": 93.4,
+    "pct_judge_among_string_wrong": 93.4,
+    "elapsed_sec": 18.0,
+    "judge_flipped_examples": [
+      {
+        "question": "In which league was Ilsinho's team?",
+        "gold": [
+          "Major League Soccer",
+          "MLS"
+        ],
+        "answer": "Brazilian League"
+      },
+      {
+        "question": "In Grown Ups, who is married to the actor who also starred in Here Comes the Boom?",
+        "gold": [
+          "Maria Bello"
+        ],
+        "answer": "Jesse Eisenberg"
+      },
+      {
+        "question": "Who is the federal leader of the party in which John Lynch-Staunton held a position?",
+        "gold": [
+          "Andrew Scheer"
+        ],
+        "answer": "The Federal Leader of the Party in which John Lynch-Staunton held a position is Donald Trump."
+      },
+      {
+        "question": "Who wrote the song turn me on that is performed by performer of Feelin' the Same Way?",
+        "gold": [
+          "John D. Loudermilk"
+        ],
+        "answer": "The Beatles"
+      },
+      {
+        "question": "Who is the spouse of the actor portraying Jerry Lee Lewis in Great Balls of Fire?",
+        "gold": [
+          "Meg Ryan"
+        ],
+        "answer": "Jill Clayburgh"
+      },
+      {
+        "question": "What's the life span of the scholar who theorized about pulmonary circulation?",
+        "gold": [
+          "1213–1288"
+        ],
+        "answer": "Ernest Rutherford"
+      },
+      {
+        "question": "Who married the governor who passed a law in honor of Donda West?",
+        "gold": [
+          "Maria Shriver"
+        ],
+        "answer": "Donda West's husband was Governor William B. Jones."
+      },
+      {
+        "question": "What body of water includes the terrain feature where Coffee Swamp is located?",
+        "gold": [
+          "Lake Superior",
+          "Superior"
+        ],
+        "answer": "The Great Lakes"
+      },
+      {
+        "question": "Where is the headquarters of the 1st Combat Communication Squadron located?",
+        "gold": [
+          "Ramstein-Miesenbach"
+        ],
+        "answer": "Fort Bragg, North Carolina"
+      },
+      {
+        "question": "When was the father of Diego Sinagra signed by Barcelona?",
+        "gold": [
+          "June 1982"
+        ],
+        "answer": "1986"
+      },
+      {
+        "question": "Who did the person portraying Batman in the Justice League movie play in Dazed and Confused?",
+        "gold": [
+          "Fred O'Bannion"
+        ],
+        "answer": "The person who played Batman in the Justice League movie was Adam Sandler."
+      },
+      {
+        "question": "What county is Gerald T. Whelan's birthplace located in?",
+        "gold": [
+          "Adams County",
+          "Adams County, Nebraska"
+        ],
+        "answer": "New Jersey"
+      },
+      {
+        "question": "When did the crowning of the person under whom the Chapter House was built happen?",
+        "gold": [
+          "1216"
+        ],
+        "answer": "1857"
+      },
+      {
+        "question": "with what movie did Mary Philips' husband win his only oscar?",
+        "gold": [
+          "The African Queen"
+        ],
+        "answer": "The movie \"Mary Poppins\" won her an Oscar for Best Original Song."
+      },
+      {
+        "question": "Who gives out the prize named after the author of Lectures on Jurisprudence?",
+        "gold": [
+          "University of Cambridge",
+          "Cambridge"
+        ],
+        "answer": "Jules Charlier"
+      },
+      {
+        "question": "What year did the city were Hans-Joachim Merker was born end?",
+        "gold": [
+          "1738"
+        ],
+        "answer": "1950"
+      },
+      {
+        "question": "Who is the spouse of the author of Queen of the Elephants?",
+        "gold": [
+          "Clio Goldsmith"
+        ],
+        "answer": "The spouse of the author of \"Queen of the Elephants\" is Elizabeth Taylor."
+      },
+      {
+        "question": "On what date did the creator of The Blind Girl die?",
+        "gold": [
+          "13 August 1896"
+        ],
+        "answer": "August 19, 2018"
+      },
+      {
+        "question": "When did the Battle at Choo Hoey's birthplace end?",
+        "gold": [
+          "15 February 1942"
+        ],
+        "answer": "1954"
+      },
+      {
+        "question": "What is the name of the university that educated the character that Mel Brooks plays in Mr. Peabody and Sherman?",
+        "gold": [
+          "Luitpold Gymnasium"
+        ],
+        "answer": "The University of Texas at Austin educated the character."
+      }
+    ],
+    "output_file": "runs/MuSiQue_07_Qwen2.5-0.5B-Instruct.pkl"
+  },
+  {
+    "step": 11,
+    "time": "2026-10-23T16:31:59",
+    "model": "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4",
+    "role": "filter",
+    "evaluated": 22,
+    "string_match_correct": 0,
+    "judge_correct": 5,
+    "total_correct": 5,
+    "answered_wrong": 17,
+    "kept": 17,
+    "pct_known": 22.7,
+    "pct_judge_among_string_wrong": 22.7,
+    "elapsed_sec": 31.1,
+    "judge_flipped_examples": [
+      {
+        "question": "How many people were in the British colonies where bison antiquus could be found?",
+        "gold": [
+          "2 million"
+        ],
+        "answer": "Millions"
+      },
+      {
+        "question": "What year did the author of The First Blast of the Trumpet Against the Monstruous Regiment of Women die?",
+        "gold": [
+          "1572"
+        ],
+        "answer": "1560"
+      },
+      {
+        "question": "Where are the headquarters for the publisher of In the Shadow of Greatness?",
+        "gold": [
+          "Annapolis",
+          "Annapolis, Maryland"
+        ],
+        "answer": "US Naval Institute Press"
+      },
+      {
+        "question": "How many atms does the bank that bought FleetBoston Financial has are there?",
+        "gold": [
+          "15,900"
+        ],
+        "answer": "Bank of America: 16,000"
+      },
+      {
+        "question": "Who is the guy defending stuff from the religious scripture that fits into a large, loose definition of legal literature?",
+        "gold": [
+          "Josh McDowell"
+        ],
+        "answer": "Apologist"
+      }
+    ],
+    "time_sensitive_removed": 0,
+    "final_questions": 17
+  },
+  {
+    "step": 12,
+    "time": "2026-10-23T16:54:00",
+    "model": "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4",
+    "role": "facts",
+    "questions": 17,
+    "unique_paragraphs": 314,
+    "facts_extracted": 3021,
+    "facts_dropped_low_p_true": 30,
+    "min_p_true": 0.5,
+    "facts_kept": 2991,
+    "facts_per_question": 175.9,
+    "supporting_facts": 300,
+    "distractor_facts": 2691,
+    "mean_p_true_supporting": 0.997,
+    "mean_p_true_distractor": 0.996,
+    "hop_coverage": "33/34",
+    "dropped_examples": [
+      {
+        "question": "When did the spouse of Parysatis II die?",
+        "fact": "Janine Kunze's breakthrough was achieved in the comedy series Die Dreisten Drei.",
+        "p_true": 0.199
+      },
+      {
+        "question": "What is the population of Francis Watson's birthplace?",
+        "fact": "Indonesia is more populous than Pakistan.",
+        "p_true": 0.324
+      },
+      {
+        "question": "What is the population of Francis Watson's birthplace?",
+        "fact": "The decrease in Montevideo's population was partly offset by mortality.",
+        "p_true": 0.374
+      },
+      {
+        "question": "What is the population of Francis Watson's birthplace?",
+        "fact": "The decrease in Montevideo's population was due to a smaller degree in migration.",
+        "p_true": 0.093
+      },
+      {
+        "question": "When did the team that Jamie Ward is a member of win the FA Cup?",
+        "fact": "The Premier League has 19 teams from England.",
+        "p_true": 0.178
+      },
+      {
+        "question": "When did the team that Jamie Ward is a member of win the FA Cup?",
+        "fact": "Manchester United has won 67 competitions against Liverpool F.C.",
+        "p_true": 0.324
+      },
+      {
+        "question": "When did the team that Jamie Ward is a member of win the FA Cup?",
+        "fact": "Manchester United has won 9 FA Cup competitions against Liverpool F.C.",
+        "p_true": 0.378
+      },
+      {
+        "question": "When did the team that Jamie Ward is a member of win the FA Cup?",
+        "fact": "Manchester United has won a total of 79 competitions against Liverpool F.C.",
+        "p_true": 0.169
+      },
+      {
+        "question": "When did the team that Jamie Ward is a member of win the FA Cup?",
+        "fact": "Roberto Martínez is the current manager of Everton F.C.",
+        "p_true": 0.434
+      },
+      {
+        "question": "When did the team that Jamie Ward is a member of win the FA Cup?",
+        "fact": "Everton F.C. won two FA Cup titles before the 1960s.",
+        "p_true": 0.225
+      },
+      {
+        "question": "When was the performer of the album From Them, Through Us, to You formed?",
+        "fact": "Marvin Gaye was murdered by his father.",
+        "p_true": 0.43
+      },
+      {
+        "question": "When was the performer of the album From Them, Through Us, to You formed?",
+        "fact": "Got It If You Want It is the second album by 22-20s to be released since the band reformed.",
+        "p_true": 0.152
+      },
+      {
+        "question": "When was the performer of the album From Them, Through Us, to You formed?",
+        "fact": "Based on a T.R.U. Story peaked at number 132 on the US R&B / HH chart.",
+        "p_true": 0.317
+      },
+      {
+        "question": "When was the performer of the album From Them, Through Us, to You formed?",
+        "fact": "Based on a T.R.U. Story peaked at number 31 on the CAN chart.",
+        "p_true": 0.123
+      },
+      {
+        "question": "When was the performer of the album From Them, Through Us, to You formed?",
+        "fact": "B.O.A.T.S. II: Me Time peaked at number 153 on the US R&B / HH chart.",
+        "p_true": 0.438
+      },
+      {
+        "question": "When was the performer of the album From Them, Through Us, to You formed?",
+        "fact": "B.O.A.T.S. II: Me Time peaked at number 87 on the BEL (FL) chart.",
+        "p_true": 0.15
+      },
+      {
+        "question": "Who was picked over the player who has scored the most points in an NBA season in the draft?",
+        "fact": "O. J. Mayo attended the University of Southern California.",
+        "p_true": 0.349
+      },
+      {
+        "question": "Who was picked over the player who has scored the most points in an NBA season in the draft?",
+        "fact": "19 players drafted were guards.",
+        "p_true": 0.396
+      },
+      {
+        "question": "Who was picked over the player who has scored the most points in an NBA season in the draft?",
+        "fact": "12 players drafted were centers.",
+        "p_true": 0.291
+      },
+      {
+        "question": "Who does William Clito's father follow?",
+        "fact": "Yankee Irving's father blames Yankee Irving for stealing Babe Ruth's famous bat Darlin'.",
+        "p_true": 0.248
+      }
+    ],
+    "extract_prompt": "Extract every fact stated in the paragraph below.\nRules:\n- One fact per line, starting with \"- \".\n- Each fact is one short, self-contained sentence with a single claim.\n- Use full names; never use pronouns (\"he\", \"she\", \"it\", \"the film\").\n- Only facts stated in the paragraph; do not add anything you know.\n\nTitle: {title}\nParagraph: {text}\n\nFacts:",
+    "judge_prompt": "Title: {title}\nParagraph: {text}\n\nStatement: {fact}\nIs the statement true according to the paragraph?\n(A) True\n(B) False\nAnswer with A or B.",
+    "elapsed_sec": 1315.2,
+    "output_file": "MuSiQue_final.pkl"
   }
 ]
