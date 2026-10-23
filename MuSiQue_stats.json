@@ -1,0 +1,13 @@
+[
+  {
+    "model": "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4",
+    "role": "filter",
+    "evaluated": 1000,
+    "string_match_correct": 182,
+    "judge_correct": 122,
+    "total_correct": 304,
+    "kept_wrong": 696,
+    "elapsed_sec": 633.86,
+    "output_file": "MuSiQue_filtered.pkl"
+  }
+]
