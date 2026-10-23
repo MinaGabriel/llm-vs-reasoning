@@ -3,7 +3,7 @@
 #   (a correct-but-differently-phrased answer just stays a candidate; the filter passes judge it later).
 #   If --model none is passed, it exports the pool directly without screening.
 #
-# Usage:  python MuSiQue.py --model Qwen/Qwen2.5-0.5B-Instruct --n 1000
+# Usage:  python MuSiQue.py --model Qwen/Qwen2.5-0.5B-Instruct --n 1000 --batch-size 32 --quant none
 #         python MuSiQue.py --model none --n 1000
 # Output: MuSiQue.pkl (candidates) and MuSiQue_stats.json (pass 1 = screening, if screened)
 import argparse
@@ -13,6 +13,7 @@ import random
 import time
 
 from datasets import load_dataset
+from tqdm import tqdm
 
 from filter import load_llm, print_summary, run_pass, save_stats, summarize
 
@@ -64,6 +65,8 @@ def main():
         help="number of candidates to collect (questions it fails or pool size)",
     )
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--batch-size", type=int, default=32, help="inference batch size")
+    parser.add_argument("--quant", choices=["none", "4bit", "8bit"], default="none", help="BitsAndBytes quantization")
     args = parser.parse_args()
 
     for old in (f"{DATASET}.pkl", f"{DATASET}_filtered.pkl", f"{DATASET}_stats.json"):
@@ -91,12 +94,14 @@ def main():
 
     print(f"{len(pool)} eligible two-hop questions; collecting {args.n} the screening model fails")
 
-    llm = load_llm(args.model)
+    llm = load_llm(args.model, quant=args.quant)
     start, kept, checked, all_records, all_logs = time.time(), [], 0, [], []
     chunk = max(2 * args.n, 256)
+
+    pbar = tqdm(total=args.n, desc="Collected failed questions")
     while len(kept) < args.n and checked < len(pool):
         batch = pool[checked : checked + chunk]
-        logs = run_pass(llm, batch, args.model, role="screening", judge=False)
+        logs = run_pass(llm, batch, args.model, role="screening", judge=False, batch_size=args.batch_size)
         for r, l in zip(batch, logs):
             if len(kept) == args.n:
                 break
@@ -107,6 +112,8 @@ def main():
             if not l["correct"]:
                 r["failed_by"] = [args.model]
                 kept.append(r)
+                pbar.update(1)
+    pbar.close()
 
     with open(f"{DATASET}.pkl", "wb") as f:
         pickle.dump(kept, f)
