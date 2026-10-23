@@ -27,8 +27,7 @@ CHAIN = [
     "Qwen/Qwen2.5-14B-Instruct",
     "Qwen/Qwen2.5-7B-Instruct",
     "Qwen/Qwen2.5-3B-Instruct",
-    "Qwen/Qwen2.5-1.5B-Instruct",
-    "Qwen/Qwen2.5-0.5B-Instruct",
+    "Qwen/Qwen2.5-1.5B-Instruct"
 ]
 FINAL_MODEL = "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4"
 TIME_SENSITIVE = re.compile(r"\b(this season|current|currently|now|this year|latest|recent|recently|today)\b", re.I)
