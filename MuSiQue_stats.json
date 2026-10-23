@@ -20,5 +20,16 @@
     "kept_wrong": 640,
     "elapsed_sec": 563.02,
     "output_file": "MuSiQue_filtered.pkl"
+  },
+  {
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "role": "filter",
+    "evaluated": 640,
+    "string_match_correct": 21,
+    "judge_correct": 9,
+    "total_correct": 30,
+    "kept_wrong": 300,
+    "elapsed_sec": 136.7,
+    "output_file": "MuSiQue_filtered_Qwen2.5-7B.pkl"
   }
 ]
