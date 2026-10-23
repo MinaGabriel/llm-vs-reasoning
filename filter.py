@@ -183,11 +183,13 @@ def print_summary(entry):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", required=True, help="candidate pool .pkl from MuSiQue.py")
-    parser.add_argument("--model", required=True, help="filter model, e.g. meta-llama/Llama-3.3-70B-Instruct")
-    parser.add_argument("--n", type=int, default=500, help="number of questions to keep")
-    parser.add_argument("--batch-size", type=int, default=16, help="inference batch size")
-    parser.add_argument("--quant", choices=["none", "4bit", "8bit"], default="4bit", help="BitsAndBytes quantization")
+    parser.add_argument("--input", required=True)
+    parser.add_argument("--model", required=True)
+    parser.add_argument("--n", type=int, default=500)
+    parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument("--quant", choices=["none", "4bit", "8bit"], default="4bit")
+    parser.add_argument("--output", type=str, default=None)
+
     args = parser.parse_args()
 
     with open(args.input, "rb") as f:
