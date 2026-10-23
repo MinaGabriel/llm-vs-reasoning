@@ -1,8 +1,12 @@
 # filter.py: knowledge filtering, closed-book (Hugging Face Transformers). Dataset-agnostic library + CLI.
-#   A question is KEPT if the model answers it wrong. An answer counts as correct if it string-matches a gold
-#   answer OR the same model judges it equivalent ("Prince Philip" = "Philip Mountbatten").
+#   Each filter model only ANSWERS (closed-book) and string-matches against the gold answers; questions it clearly
+#   knows are dropped. Judging is done ONCE at the end by a single strong judge over every saved answer (judge_all),
+#   so all models are graded by the same judge ("Prince Philip" = "Philip Mountbatten").
+#   evidence_check: a model answers using ONLY the gold (supporting) paragraphs; together with a wrong closed-book
+#   answer, a correct evidence answer shows the paragraphs are sufficient and the answer is not known from memory.
 #
-# Library (used by pipeline.py and facts.py): load_llm, unload_llm, generate_batched, run_pass, summarize, save_stats
+# Library (used by pipeline.py and facts.py): load_llm, unload_llm, generate_batched, run_pass, apply_pass,
+#   evidence_check, judge_all, dedupe, summarize, save_stats
 # CLI:  python filter.py --input MuSiQue.pkl --model Qwen/Qwen2.5-7B-Instruct --output MuSiQue_f.pkl
 import argparse
 import datetime
@@ -13,6 +17,7 @@ import pickle
 import re
 import time
 import unicodedata
+from collections import Counter
 
 import torch
 from tqdm import tqdm
@@ -24,6 +29,14 @@ Question: Who directed Jaws?
 Answer: Steven Spielberg
 Question: What is the capital of the country where the Eiffel Tower is?
 Answer: Paris"""
+
+EVIDENCE = """Answer the question using only the paragraphs below. Answer with only the answer, in as few words as
+possible. No sentences, no explanations.
+
+{paragraphs}
+
+Question: {question}
+Answer:"""
 
 JUDGE = """Question: {question}
 Gold answer: {gold}
@@ -59,27 +72,21 @@ def load_llm(model_id, quant="none"):
     tok.padding_side = "left"
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-
-    is_prequantized = any(q in model_id.lower() for q in ("awq", "gptq"))
-    if is_prequantized:
-        # AWQ/GPTQ kernels cannot be offloaded to CPU/meta; pin directly to GPU 0 in fp16
-        kwargs = {"device_map": {"": 0}, "torch_dtype": torch.float16}
+    if any(q in model_id.lower() for q in ("awq", "gptq")):
+        kwargs = {"device_map": {"": 0}, "torch_dtype": torch.float16}   # AWQ/GPTQ kernels cannot be offloaded
     else:
         kwargs = {"device_map": "auto"}
         if quant == "4bit":
-            kwargs["quantization_config"] = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype=torch.bfloat16,
-                bnb_4bit_use_double_quant=True,
-            )
+            kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
+                                                               bnb_4bit_compute_dtype=torch.bfloat16,
+                                                               bnb_4bit_use_double_quant=True)
         elif quant == "8bit":
             kwargs["quantization_config"] = BitsAndBytesConfig(load_in_8bit=True)
         else:
             kwargs["torch_dtype"] = torch.bfloat16
-
     model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs).eval()
     return model, tok
+
 
 def unload_llm(llm, model_id=None, delete_cache=False):
     """Free GPU memory; optionally delete the model's files from the Hugging Face cache (saves disk)."""
@@ -102,7 +109,7 @@ def unload_llm(llm, model_id=None, delete_cache=False):
 
 
 def batch_size_for(model_id):
-    """A sensible batch size from the model size in its name (e.g. '72B' -> 16, '7B' -> 64)."""
+    """A sensible batch size from the model size in its name (e.g. '72B' -> 16, '7B' -> 96)."""
     m = re.search(r"(\d+(?:\.\d+)?)B", model_id)
     size = float(m.group(1)) if m else 8
     return 16 if size >= 60 else 32 if size >= 25 else 48 if size >= 10 else 96
@@ -123,72 +130,115 @@ def generate_batched(llm, prompts, max_new_tokens=32, batch_size=16, desc="Gener
     return results
 
 
-# ---------- one filter pass ----------
+# ---------- answering passes ----------
 
-def run_pass(llm, records, model_id, role="filter", judge=True, batch_size=16):
+def run_pass(llm, records, model_id, role="filter", batch_size=16):
     """
-    Description: The model answers every question closed-book; answers that fail string matching are judged by the
-                 same model. Returns one log entry per record (same order).
+    Description: The model answers every question closed-book; string matching only (judging comes later).
     Output:      [{"model", "role", "answer", "raw_answer", "string_match", "judge_match", "judge_raw", "correct"}, ...]
     """
     _, tok = llm
     raws = generate_batched(llm, [chat(tok, f"{INSTRUCTION}\n\nQuestion: {r['question']}\nAnswer:") for r in records],
                             max_new_tokens=32, batch_size=batch_size, desc=f"[{model_id.split('/')[-1]}] answering")
-    answers = [raw.split("\n")[0].strip() for raw in raws]
-    logs = [{"model": model_id, "role": role, "answer": a, "raw_answer": raw,
-             "string_match": is_correct(a, r["gold_answers"]), "judge_match": None, "judge_raw": None}
-            for r, a, raw in zip(records, answers, raws)]
-    if judge:
-        idx = [i for i, l in enumerate(logs) if not l["string_match"]]
-        verdicts = generate_batched(llm, [chat(tok, JUDGE.format(question=records[i]["question"],
-                                                                 gold=" / ".join(records[i]["gold_answers"]),
-                                                                 answer=logs[i]["answer"])) for i in idx],
-                                    max_new_tokens=3, batch_size=batch_size,
-                                    desc=f"[{model_id.split('/')[-1]}] judging")
-        for i, v in zip(idx, verdicts):
-            logs[i]["judge_raw"] = v
-            logs[i]["judge_match"] = v.lower().startswith("yes")
-    for l in logs:
-        l["correct"] = bool(l["string_match"] or l["judge_match"])
+    logs = []
+    for r, raw in zip(records, raws):
+        answer = raw.split("\n")[0].strip()
+        sm = is_correct(answer, r["gold_answers"])
+        logs.append({"model": model_id, "role": role, "answer": answer, "raw_answer": raw,
+                     "string_match": sm, "judge_match": None, "judge_raw": None, "correct": sm})
     return logs
 
 
 def apply_pass(records, logs, model_id):
-    """Attach the log to every record; return the records the model answered wrong (failed_by updated)."""
+    """Attach the log to every record; return the records NOT answered correctly by string match."""
     name = model_id.split("/")[-1]
-    wrong = []
+    kept = []
     for r, l in zip(records, logs):
         r.setdefault("filter_log", []).append(l)
-        if not l["correct"]:
-            r["failed_by"] = r.get("failed_by", []) + [model_id]
+        if not l["string_match"]:
             r[f"answer_{name}"] = l["answer"]
-            wrong.append(r)
-    return wrong
+            kept.append(r)
+    return kept
+
+
+def evidence_check(llm, records, model_id, batch_size=16):
+    """
+    Description: The model answers using ONLY the supporting paragraphs. Stored in record["evidence_check"]
+                 (string match now; the final judge grades the rest). Records without supporting paragraphs get None.
+    """
+    _, tok = llm
+    idx, prompts = [], []
+    for i, r in enumerate(records):
+        gold = [p for p in r.get("paragraphs") or [] if isinstance(p, dict) and p.get("is_supporting")]
+        if gold:
+            text = "\n\n".join(f"{p.get('title', '')}: {p.get('text', '')}" for p in gold)
+            idx.append(i)
+            prompts.append(chat(tok, EVIDENCE.format(paragraphs=text, question=r["question"])))
+        else:
+            r["evidence_check"] = None
+    raws = generate_batched(llm, prompts, max_new_tokens=32, batch_size=max(1, batch_size // 2),
+                            desc=f"[{model_id.split('/')[-1]}] evidence check")
+    for i, raw in zip(idx, raws):
+        answer = raw.split("\n")[0].strip()
+        sm = is_correct(answer, records[i]["gold_answers"])
+        records[i]["evidence_check"] = {"model": model_id, "answer": answer, "raw_answer": raw, "string_match": sm,
+                                        "judge_match": None, "judge_raw": None, "correct": sm}
+    return len(idx), sum(records[i]["evidence_check"]["string_match"] for i in idx)
+
+
+def judge_all(llm, records, judge_model, batch_size=16):
+    """
+    Description: One judge grades every saved answer that failed string matching (every model's closed-book answer and
+                 the evidence-check answer). Fills judge_match / judge_raw / correct. Returns flips per model.
+    Output:      {"Qwen/Qwen2.5-72B-Instruct-AWQ": {"judged": 310, "flipped": 21}, ..., "evidence_check": {...}}
+    """
+    _, tok = llm
+    items = []                                                      # (record, entry, label)
+    for r in records:
+        r["judge_model"] = judge_model
+        for l in r.get("filter_log", []):
+            if not l["string_match"]:
+                items.append((r, l, l["model"]))
+        ev = r.get("evidence_check")
+        if ev and not ev["string_match"]:
+            items.append((r, ev, "evidence_check"))
+    verdicts = generate_batched(llm, [chat(tok, JUDGE.format(question=r["question"], gold=" / ".join(r["gold_answers"]),
+                                                             answer=e["answer"])) for r, e, _ in items],
+                                max_new_tokens=3, batch_size=batch_size, desc="[judge] grading all answers")
+    stats = {}
+    for (r, e, label), v in zip(items, verdicts):
+        e["judge_raw"] = v
+        e["judge_match"] = v.lower().startswith("yes")
+        e["correct"] = bool(e["string_match"] or e["judge_match"])
+        s = stats.setdefault(label, {"judged": 0, "flipped": 0, "examples": []})
+        s["judged"] += 1
+        if e["judge_match"]:
+            s["flipped"] += 1
+            if len(s["examples"]) < 10:
+                s["examples"].append({"question": r["question"], "gold": r["gold_answers"], "answer": e["answer"]})
+    return stats
+
+
+def dedupe(records):
+    """Keep the first question per gold answer (removes reworded duplicates of the same chain)."""
+    seen, out = set(), []
+    for r in records:
+        key = normalize(r["answer"])
+        if key not in seen:
+            seen.add(key)
+            out.append(r)
+    return out
 
 
 # ---------- logging ----------
 
 def summarize(records, logs, model_id, role, elapsed, kept_count, extra=None):
-    """Statistics of one pass, for the paper."""
+    """Statistics of one answering pass, for the paper."""
     n = len(logs)
     n_sm = sum(bool(l["string_match"]) for l in logs)
-    n_jm = sum(bool(l.get("judge_match")) for l in logs)
-    flipped = [{"question": r["question"], "gold": r["gold_answers"], "answer": l["answer"]}
-               for r, l in zip(records, logs) if l.get("judge_match")]
-    entry = {
-        "model": model_id,
-        "role": role,
-        "evaluated": n,
-        "string_match_correct": n_sm,
-        "judge_correct": n_jm,
-        "total_correct": n_sm + n_jm,
-        "answered_wrong": n - n_sm - n_jm,
-        "kept": kept_count,
-        "pct_known": round(100 * (n_sm + n_jm) / n, 1) if n else None,
-        "pct_judge_among_string_wrong": round(100 * n_jm / (n - n_sm), 1) if n > n_sm else None,
-        "elapsed_sec": round(elapsed, 1),
-        "judge_flipped_examples": flipped[:20],
-    }
+    entry = {"model": model_id, "role": role, "evaluated": n, "string_match_correct": n_sm,
+             "kept": kept_count, "pct_known_string": round(100 * n_sm / n, 1) if n else None,
+             "elapsed_sec": round(elapsed, 1)}
     entry.update(extra or {})
     return entry
 
@@ -207,35 +257,31 @@ def save_stats(dataset, entry):
 
 
 def print_summary(entry):
-    print(f"[{entry['role']} | {entry['model']}] evaluated {entry['evaluated']} | string match {entry['string_match_correct']} | "
-          f"judge {entry['judge_correct']} | kept {entry['kept']} | {entry['elapsed_sec']} s")
+    print(f"[{entry['role']} | {entry['model']}] evaluated {entry['evaluated']} | "
+          f"string match {entry['string_match_correct']} | kept {entry['kept']} | {entry['elapsed_sec']} s")
 
 
-# ---------- CLI (one filter pass on a file) ----------
+# ---------- CLI (one answering pass on a file) ----------
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True)
     parser.add_argument("--model", required=True)
     parser.add_argument("--output", required=True)
-    parser.add_argument("--n", type=int, default=None, help="keep at most n (default: all answered wrong)")
     parser.add_argument("--batch-size", type=int, default=None)
     parser.add_argument("--quant", choices=["none", "4bit", "8bit"], default="none")
     args = parser.parse_args()
     if os.path.abspath(args.output) == os.path.abspath(args.input):
         raise SystemExit("--output must differ from --input")
-
     records = pickle.load(open(args.input, "rb"))
-    dataset = records[0]["dataset"]
     start = time.time()
     llm = load_llm(args.model, args.quant)
     logs = run_pass(llm, records, args.model, batch_size=args.batch_size or batch_size_for(args.model))
     kept = apply_pass(records, logs, args.model)
-    kept = kept[:args.n] if args.n else kept
     pickle.dump(kept, open(args.output, "wb"))
     entry = summarize(records, logs, args.model, "filter", time.time() - start, len(kept),
                       {"input_file": args.input, "output_file": args.output})
-    save_stats(dataset, entry)
+    save_stats(records[0]["dataset"], entry)
     print_summary(entry)
 
 
