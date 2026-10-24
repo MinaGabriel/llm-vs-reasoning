@@ -1908,5 +1908,45 @@
       ]
     },
     "elapsed_sec": 471.1
+  },
+  {
+    "step": 23,
+    "time": "2026-10-24T01:13:16",
+    "model": "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4",
+    "role": "facts",
+    "questions": 5,
+    "unique_paragraphs": 100,
+    "facts_extracted": 846,
+    "facts_dropped_low_p_true": 3,
+    "min_p_true": 0.5,
+    "facts_kept": 843,
+    "facts_per_question": 168.6,
+    "supporting_facts": 66,
+    "distractor_facts": 777,
+    "mean_p_true_supporting": 0.999,
+    "mean_p_true_distractor": 0.996,
+    "hop_coverage": "10/10",
+    "dropped_examples": [
+      {
+        "question": "Who is the child of the Victim of Romance performer?",
+        "fact": "Wendy Wilson is the daughter of John and Michelle Phillips.",
+        "p_true": 0.055
+      },
+      {
+        "question": "Where is the headquarters of the 1st Combat Communication Squadron located?",
+        "fact": "The Alamnagar block headquarters are located in Madhepura.",
+        "p_true": 0.05
+      },
+      {
+        "question": "When was the father of Diego Sinagra signed by Barcelona?",
+        "fact": "Eto'o publicly criticized Ronaldinho.",
+        "p_true": 0.083
+      }
+    ],
+    "extract_prompt": "Extract every fact stated in the paragraph below.\nRules:\n- One fact per line, starting with \"- \".\n- Each fact is one short, self-contained sentence with a single claim.\n- Use full names; never use pronouns (\"he\", \"she\", \"it\", \"the film\").\n- Only facts stated in the paragraph; do not add anything you know.\n\nTitle: {title}\nParagraph: {text}\n\nFacts:",
+    "judge_prompt": "Title: {title}\nParagraph: {text}\n\nStatement: {fact}\nIs the statement true according to the paragraph?\n(A) True\n(B) False\nAnswer with A or B.",
+    "elapsed_sec": 1178.1,
+    "input_file": "runs/MuSiQue_final_questions.pkl",
+    "output_file": "runs/MuSiQue_final_questions_facts.pkl"
   }
 ]
