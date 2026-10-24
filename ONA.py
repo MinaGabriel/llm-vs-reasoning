@@ -35,20 +35,20 @@ Fact: Dennis Quaid played Jerry Lee Lewis in Great Balls of Fire.
 Fact: {fact}
 """
 
-RULES = """Write rules that answer the question from the triples below.
-- Use ONLY the relations and entities listed, spelled exactly as listed. Keep each relation's direction (subject -> object).
-- Use variables ?A, ?B, ?C for unknown entities. "answer" is the variable holding the answer.
-- Give 1 to 3 alternative rules if the needed relation could be phrased in different ways.
-- Reply with JSON only.
+RULES = """Translate the question into a rule using the available triples.
+- Most triples are distractors. Identify the named subject, work, place, or event in the question and anchor the rule to its matching entity.
+- Follow a connected chain of relations from that anchor to the requested answer. Shared words such as "child" or "performer" alone do not establish relevance.
+- Use ONLY relations and entities in the triples, spelled exactly as listed. Preserve each relation's subject/object direction.
+- Replace intermediate entities and the requested answer with variables ?A, ?B, ?C. Keep the question's anchor as a constant.
+- The "answer" field must name a variable used in the conditions, not a known entity.
+- Each condition is [subject, relation, object]. All conditions must hold together.
+- Return 1 to 3 rules only when supported by connected triples; otherwise return an empty rules list. Do not invent missing links.
+- Reply with JSON only, shaped as {{"rules": [{{"conditions": [["?A", "relation", "anchor"], ["?B", "relation", "?A"]], "answer": "?B"}}]}}.
 
-Example
-Question: Who married the governor who passed a law in honor of Donda West?
-Relations: signed (Arnold Schwarzenegger -> Donda West Law); wife_of (Maria Shriver -> Arnold Schwarzenegger)
-Answer: {{"rules": [{{"conditions": [["?A", "signed", "Donda West Law"], ["?B", "wife_of", "?A"]], "answer": "?B"}}]}}
+Available triples [subject, relation, object]:
+{triples}
 
 Question: {question}
-Relations: {relations}
-Entities: {entities}
 Answer:"""
 
 
@@ -97,13 +97,9 @@ class OnaReasoner:
         _, tok = self.llm
         prompts = []
         for r in records:
-            examples = {}
-            for t in r["triples"]:
-                examples.setdefault(atom(t["relation"]), f"{t['subject']} -> {t['object']}")
-            entities = sorted({t["subject"] for t in r["triples"]} | {t["object"] for t in r["triples"]})
+            triples = [[t["subject"], atom(t["relation"]), t["object"]] for t in r["triples"]]
             prompts.append(chat(tok, RULES.format(question=r["question"],
-                                                  relations="; ".join(f"{k} ({v})" for k, v in examples.items()),
-                                                  entities="; ".join(entities))))
+                                                  triples=json.dumps(triples, ensure_ascii=False))))
         raws = generate_batched(self.llm, prompts, max_new_tokens=300, batch_size=max(1, self.batch_size // 2),
                                 desc="[nars] question -> rules")
         for r, raw in zip(records, raws):
