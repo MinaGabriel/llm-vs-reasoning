@@ -1,10 +1,12 @@
 # nars_ona.py: the formal NARS branch, end to end (ONA = OpenNARS for Applications).
-#   Input : records with "question", "gold_answers", "facts" (from facts.py: text, p_true, c).
+#   Input : records with "question", "gold_answers", "facts" (from facts.py: text and paragraph provenance).
+#           Translation supplies f = 1.0, c = 0.5 by default; legacy facts may supply truth values.
 #   Output: record["nars"] = answer, truth (f, c), expectation e, correct, status, and the full Narsese program.
 #
 #   1. Triples (LLM): each fact -> 1-3 triples (subject, relation, object). Batched; each unique fact once.
 #   2. Rules (LLM):   question + this question's relations/entities -> up to 3 rules (conditions -> answer variable).
-#   3. Narsese (code): facts  <(s * o) --> r>. {f c}   with f = P(True), c = fact c (0.5)
+#   3. Narsese (code): facts  <(s * o) --> r>. {f c}   with asserted f = 1.0, c = 0.5 by default.
+#                      Older scored files remain supported through their p_true field.
 #                      rules  <((A && B) && C) ==> <$x --> answer>>. {1.0 0.9}   (named variables $a, $b, ...)
 #                      query  <?1 --> answer>?   then N inference cycles
 #   4. ONA (code): run ./NAR shell, take the last "Answer:" line -> atom, f, c; e = c (f - 0.5) + 0.5; grade vs gold.
@@ -88,7 +90,7 @@ class OnaReasoner:
             parsed[t] = [x for x in out if isinstance(x, dict) and all(x.get(k) for k in ("subject", "relation", "object"))]
         for r in records:
             r["triples"] = [{"subject": x["subject"], "relation": x["relation"], "object": x["object"],
-                             "f": f["p_true"], "c": f.get("c", 0.5), "fact": f["text"]}
+                             "f": f.get("f", f.get("p_true", 1.0)), "c": f.get("c", 0.5), "fact": f["text"]}
                             for f in r["facts"] for x in parsed.get(f["text"], [])]
 
     # ---------- 2. question -> rules (LLM) ----------

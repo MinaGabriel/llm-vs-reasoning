@@ -5,7 +5,7 @@
 #      Each model is loaded, used, unloaded, and deleted from the disk cache before the next one.
 #   3. Final model, ONE load: answers closed-book, then JUDGES every saved answer of every model (one judge for all),
 #      keeps questions all models got wrong AND the evidence check got right, drops time-sensitive questions and
-#      duplicates, takes --final, and extracts facts + P(True) for them.
+#      duplicates, takes --final, and extracts facts without a separate fact-judging pass.
 #   Every step is saved in runs/ (resume with --resume) and appended to <dataset>_stats.json.
 #
 # Usage:  python pipeline.py --dataset MuSiQue --pool 800 --final 100
@@ -52,7 +52,6 @@ def main():
     parser.add_argument("--evidence-model", default=EVIDENCE_MODEL, help="must be in --chain")
     parser.add_argument("--final-model", default=FINAL_MODEL, help="last filter, judge of all answers, fact extractor")
     parser.add_argument("--facts-batch", type=int, default=16)
-    parser.add_argument("--min-p-true", type=float, default=0.5)
     parser.add_argument("--keep-cache", action="store_true")
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
@@ -139,9 +138,8 @@ def main():
     save(final, f"runs/{name}_final_questions.pkl")
 
     start = time.time()
-    all_facts, n_unique = FA.extract_and_judge(llm, [r.get("paragraphs") for r in final], args.final_model,
-                                               args.facts_batch)
-    facts_entry = FA.attach_facts(final, all_facts, n_unique, args.final_model, args.min_p_true, time.time() - start)
+    all_facts, n_unique = FA.extract_facts(llm, [r.get("paragraphs") for r in final], args.facts_batch)
+    facts_entry = FA.attach_facts(final, all_facts, n_unique, args.final_model, time.time() - start)
     F.unload_llm(llm, args.final_model, delete_cache=not args.keep_cache)
     out_file = f"{name}_final.pkl"
     save(final, out_file)
