@@ -1,0 +1,29 @@
+{
+  "validation": {
+    "screened": 440,
+    "unknown": 216,
+    "answerable": 119,
+    "selected": 74,
+    "complete": 74
+  },
+  "train": {
+    "screened": 800,
+    "unknown": 487,
+    "answerable": 396,
+    "selected": 136,
+    "complete": 136
+  },
+  "questions": 200,
+  "by_source": {
+    "validation": 74,
+    "train": 126
+  },
+  "api": {
+    "model": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+    "requests": 7260,
+    "failed": 0,
+    "input_tokens": 1286951,
+    "output_tokens": 689633,
+    "cost_usd": 0.7906
+  }
+}
