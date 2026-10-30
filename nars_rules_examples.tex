@@ -1,0 +1,84 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{booktabs}
+
+\definecolor{codebg}{HTML}{F5F7FA}
+\definecolor{frame}{HTML}{C9D1DB}
+\definecolor{accent}{HTML}{1B7A5A}
+
+\lstdefinestyle{narsese}{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single, rulecolor=\color{frame},
+  framesep=6pt, xleftmargin=8pt, xrightmargin=8pt,
+  columns=fullflexible, keepspaces=true,
+  breaklines=true, breakatwhitespace=false,
+  postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space},
+  showstringspaces=false, upquote=true,
+  aboveskip=6pt, belowskip=10pt
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries NARS vs.\ NARS (rules from question)}\\[4pt]
+  {\small Question: \emph{Where was the director of Film X born?}}
+\end{center}
+
+\section*{Example 1: rule from the question}
+\textbf{Input}
+\begin{lstlisting}[style=narsese]
+*volume=0
+<(ann * film_x) --> directed>. {1.0 0.5}
+<(ann * paris) --> born_in>. {1.0 0.5}
+<(<($a * film_x) --> directed> && <($a * $b) --> born_in>) ==> <$b --> answer>>. {1.0 0.9}
+100
+<?1 --> answer>?
+100
+\end{lstlisting}
+\textbf{Output}
+\begin{lstlisting}[style=narsese]
+Answer: <paris --> answer>. creationTime=3 Stamp=[2,3,1] Truth: frequency=1.000000, confidence=0.225000
+\end{lstlisting}
+
+\section*{Example 2: rule with Ann filled in by the LLM}
+\textbf{Input}
+\begin{lstlisting}[style=narsese]
+*volume=0
+<(ann * film_x) --> directed>. {1.0 0.5}
+<(ann * paris) --> born_in>. {1.0 0.5}
+<<(ann * $b) --> born_in> ==> <$b --> answer>>. {1.0 0.9}
+100
+<?1 --> answer>?
+100
+\end{lstlisting}
+\textbf{Output}
+\begin{lstlisting}[style=narsese]
+Answer: <paris --> answer>. creationTime=3 Stamp=[2,3] Truth: frequency=1.000000, confidence=0.450000
+\end{lstlisting}
+
+\section*{How the two rows relate}
+\textbf{NARS (rules from question)} is a subset of \textbf{NARS}.
+
+\begin{center}
+\begin{tabular}{@{}lr@{}}
+  \toprule
+  \textbf{NARS} (all correct answers) & \textbf{64} \\
+  \midrule
+  \quad\textcolor{accent}{\textbf{Rules from question}} (NARS did every hop) & \textcolor{accent}{\textbf{51}} \\
+  \quad LLM filled in a hop, or the rule named no one & 13 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Every answer in the ``rules from question'' row is also in the ``NARS'' row, but not every ``NARS'' answer is in
+``rules from question''. So ``NARS'' is always the bigger number.
+
+\end{document}
